@@ -174,7 +174,31 @@ def skipgram(currentCenterWord, windowSize, outsideWords, word2Ind,
     ### YOUR CODE HERE
     currentWord_id = word2Ind[currentCenterWord]
     v_center = centerWordVectors[currentWord_id]
-
+    
+    if word2vecLossAndGradient == naiveSoftmaxLossAndGradient:
+        for outside_word in outsideWords:
+            outsideWordIdx = word2Ind[outside_word]
+            each_loss, each_grad_center, each_grad_out = \
+            word2vecLossAndGradient(v_center, 
+                                    outsideWordIdx, 
+                                    outsideVectors,
+                                    dataset)
+            loss += each_loss
+            gradCenterVecs[centerwordId] += each_grad_center
+            gradOutsideVectors += each_grad_out
+    elif word2vecLossAndGradient == negSamplingLossAndGradient:
+        for outside_word in outsideWords:
+            outsideWordIdx = word2Ind[outside_word]
+            each_loss, each_grad_center, each_grad_out = \
+            word2vecLossAndGradient(v_center, 
+                                    outsideWordIdx, 
+                                    outsideVectors, 
+                                    dataset,
+                                    K=10)
+            loss += each_loss
+            gradCenterVecs[centerwordId] += each_grad_center
+            gradOutsideVectors += each_grad_out
+    '''
     for outside_word in outsideWords:
         outsideWordIdx = word2Ind[outside_word]
         each_loss, each_grad_center, each_grad_out = \
@@ -182,6 +206,7 @@ def skipgram(currentCenterWord, windowSize, outsideWords, word2Ind,
         loss += each_loss
         gradCenterVecs[currentWord_id] += each_grad_center
         gradOutsideVectors += each_grad_out
+     '''   
     ### END YOUR CODE
     return loss, gradCenterVecs, gradOutsideVectors
 
